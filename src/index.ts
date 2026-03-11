@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import websocket from '@fastify/websocket'
 import 'dotenv/config'
+import { redisService } from './redis'
 
 interface ChatMessage {
   senderId: string
@@ -8,25 +9,65 @@ interface ChatMessage {
   timestamp: number
 }
 
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://app.seusite.com'
+]
+
 const fastify = Fastify({ logger: true })
 
 fastify.register(websocket)
 
 fastify.register(async (instance) => {
-  instance.get('/chat', { websocket: true }, (connection, req) => {
+  instance.get('/ws', { websocket: true }, async (connection, req) => {
 
-    connection.on('message', (message: Buffer) => {
-      const data: ChatMessage = JSON.parse(message.toString())
+    const origin = req.headers.origin
 
-      console.log(`Mensagem de ${data.senderId}: ${data.text}`)
+    if (!origin || !allowedOrigins.includes(origin)) {
+      connection.close()
+      return
+    }
 
-      connection.send(
-        JSON.stringify({
-          status: 'ok',
-          receivedAt: Date.now()
-        })
-      )
+    const { session } = req.query as { session?: string }
+
+    if (typeof session !== 'string') {
+      connection.close()
+      return
+    }
+    
+    const getSession = await redisService.get(`session:${session}`);
+
+    if(!getSession) {
+      connection.close()
+      return
+    }
+
+      let messages = 0
+
+      setInterval(() => {
+        messages = 0
+      }, 60000)
+
+    connection.on('message', (message) => {
+      messages++;
+      
+      if (typeof message !== 'string' && !Buffer.isBuffer(message)) {
+        connection.close()
+        return;
+      }
+
+      if (message.length > 5000) {
+        connection.close()
+        return;
+      }
+
+      if (messages > 100) {
+        connection.close()
+        return;
+      }
     })
+
+    connection.send(JSON.stringify({ pong: 'pong' }))
 
     connection.on('close', () => {
       console.log('Cliente desconectou')

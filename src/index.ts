@@ -2,6 +2,9 @@ import Fastify from 'fastify'
 import websocket from '@fastify/websocket'
 import 'dotenv/config'
 import { redisService } from './redis'
+import { Message } from './message'
+import axios from 'axios'
+import { RedisPubSub } from './redispubsub'
 
 interface ChatMessage {
   senderId: string
@@ -34,40 +37,90 @@ fastify.register(async (instance) => {
       connection.close()
       return
     }
-    
-    const getSession = await redisService.get(`session:${session}`);
 
-    if(!getSession) {
+    const userId = await redisService.get(`session:${session}`);
+
+    if (!userId) {
       connection.close()
       return
     }
 
-      let messages = 0
+    let messages = 0
 
-      setInterval(() => {
-        messages = 0
-      }, 60000)
+    setInterval(() => {
+      messages = 0
+    }, 60000)
 
-    connection.on('message', (message) => {
+    const redisPubSub = new RedisPubSub();
+
+    await redisPubSub.init((data: any, channel) => {
+      if (data.type === 'created-message') {
+        console.log(data)
+        connection.send(Message.getMessage('receive-message', data.data));
+      }
+    })
+
+    const closeConnection = async () => {
+      await redisPubSub.close();
+      connection.close();
+    }
+
+    connection.on('message', async (message) => {
       messages++;
-      
+
       if (typeof message !== 'string' && !Buffer.isBuffer(message)) {
-        connection.close()
+        await closeConnection();
         return;
       }
 
       if (message.length > 5000) {
-        connection.close()
+        await closeConnection();
         return;
       }
 
       if (messages > 100) {
-        connection.close()
+        await closeConnection();
         return;
       }
-    })
 
-    connection.send(JSON.stringify({ pong: 'pong' }))
+      try {
+        const parsedMessage = Message.parseMessage(message);
+
+        switch (parsedMessage.type) {
+          case 'send-message':
+            console.log({
+              id: parsedMessage.data.uuid,
+              event_id: parsedMessage.data.eventId,
+              message: parsedMessage.data.message,
+              user_id: userId,
+            })
+            const { data: message } = await axios.post(`${process.env.APP_URL!}/api/chat/create-message`, {
+              id: parsedMessage.data.uuid,
+              event_id: parsedMessage.data.eventId,
+              message: parsedMessage.data.message,
+              user_id: userId,
+            }, {
+              headers: {
+                accessToken: process.env.ACCESS_TOKEN
+              }
+            })
+
+            redisPubSub.publish({
+              type: 'created-message',
+              data: message
+            })
+
+            break;
+          case 'ping':
+            break;
+          default:
+            throw new Error('Not implemented')
+        }
+
+      } catch (e) {
+        await closeConnection();
+      }
+    })
 
     connection.on('close', () => {
       console.log('Cliente desconectou')

@@ -94,7 +94,7 @@ const start = async () => {
           connection.close();
         }
 
-        connection.on('message', async (message) => {
+        connection.on('message', async (message: any) => {
           messages++;
 
           if (typeof message !== 'string' && !Buffer.isBuffer(message)) {
@@ -113,7 +113,7 @@ const start = async () => {
           }
 
           try {
-            const parsedMessage = Message.parseMessage(message);
+            const parsedMessage = Message.parseMessage(message as Buffer);
 
             switch (parsedMessage.type) {
               case 'send-message':

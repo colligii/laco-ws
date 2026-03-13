@@ -16,7 +16,7 @@ const videoWorker = async () => {
     // Adicionado log para ver o que chegou da fila
     console.log("Tarefa recebida na fila:", result);
 
-    const {session, tempFile, uploadUrl} = result;
+    const {session, tempFile, uploadUrl} = result.element;
 
     console.log(session, tempFile, uploadUrl);
 

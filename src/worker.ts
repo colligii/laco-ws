@@ -14,9 +14,9 @@ const videoWorker = async () => {
     const result: any = await redisService.blpop('video-queue', 0);
     
     // Adicionado log para ver o que chegou da fila
-    console.log("Tarefa recebida na fila:", result);
+    console.log("Tarefa recebida na fila:", result.element);
 
-    const {session, tempFile, uploadUrl} = result.element;
+    const {session, tempFile, uploadUrl} = JSON.parse(result.element);
 
     console.log(session, tempFile, uploadUrl);
 

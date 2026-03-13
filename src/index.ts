@@ -206,6 +206,8 @@ const videoWorker = async () => {
           try {
             const parsedMessage = Message.parseMessage(message as Buffer);
 
+            console.log('received message', parsedMessage)
+
             switch (parsedMessage.type) {
               case 'send-message':
                 const { data: message } = await axios.post(`${process.env.APP_URL!}/api/chat/create-message`, {

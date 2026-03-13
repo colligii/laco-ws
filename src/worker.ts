@@ -41,12 +41,32 @@ const videoWorker = async () => {
         writer.on('error', reject);
       });
 
+      let orientation: any;
+
+      if(!tempFile?.orientation) {
+        const o = Number(tempFile?.orientation);
+
+        if(!isNaN(o) && o === 0) {
+          orientation = o;
+        }
+      }
+
+      const rotateFilter = orientation && orientation !== 0
+        ? `rotate=${orientation}*PI/180`
+        : null;
+
       console.log(`Download concluído: ${localInputPath}. Iniciando conversão FFmpeg...`);
 
       await new Promise((resolve, reject) => {
-        ffmpeg(localInputPath)
+        let initialRequest = ffmpeg(localInputPath)
           .outputOptions(['-c:v libx264', '-movflags +faststart', '-pix_fmt yuv420p'])
-          .save(localOutputPath)
+          
+          if(rotateFilter) {
+            initialRequest = initialRequest.videoFilters(rotateFilter);
+          }
+
+          initialRequest
+            .save(localOutputPath)
           .on('end', () => {
             console.log("Conversão FFmpeg finalizada com sucesso.");
             resolve(null);

@@ -14,7 +14,7 @@ interface ChatMessage {
 
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://app.seusite.com'
+  'https://laco.mahevini.com.br'
 ]
 
 const fastify = Fastify({ logger: true })
@@ -98,6 +98,7 @@ const start = async () => {
           messages++;
 
           if (typeof message !== 'string' && !Buffer.isBuffer(message)) {
+            console.log('conexão fechada')
             await closeConnection();
             return;
           }

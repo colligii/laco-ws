@@ -75,7 +75,11 @@ const videoWorker = async () => {
       
       console.log('Migrando post temporario para fixo');
 
-      await axios.post(`${process.env.APP_URL!}/api/story/migrate/temp/${storyId}`);
+      await axios.post(`${process.env.APP_URL!}/api/story/migrate/temp/${storyId}`, {}, {
+        headers: {
+                  accessToken: process.env.ACCESS_TOKEN
+                }
+      });
 
       console.log('Migrado com sucesso')
 

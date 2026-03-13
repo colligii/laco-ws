@@ -11,7 +11,7 @@ const videoWorker = async () => {
   console.log("Worker de vídeo aguardando tarefas...");
 
   while (true) {
-    const result: any = await redisService.blpop('fila-de-video', 0);
+    const result: any = await redisService.blpop('video-queue', 0);
     
     // Adicionado log para ver o que chegou da fila
     console.log("Tarefa recebida na fila:", result[1]);

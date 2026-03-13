@@ -10,7 +10,7 @@ const redisPubSub = new RedisPubSub();
 const videoWorker = async () => {
   console.log("Worker de vídeo aguardando tarefas...");
 
-    const tempDir = path.resolve('./temp');
+  const tempDir = path.resolve('./temp');
   if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir, { recursive: true });
     console.log(`Diretório ${tempDir} criado.`);
@@ -18,11 +18,11 @@ const videoWorker = async () => {
 
   while (true) {
     const result: any = await redisService.blpop('video-queue', 0);
-    
+
     // Adicionado log para ver o que chegou da fila
     console.log("Tarefa recebida na fila:", result.element);
 
-    const {session, tempFile, uploadUrl, storyId} = JSON.parse(result.element);
+    const { session, tempFile, uploadUrl, storyId } = JSON.parse(result.element);
 
     console.log(session, tempFile, uploadUrl, storyId);
 
@@ -33,11 +33,11 @@ const videoWorker = async () => {
 
     try {
       console.log(`Iniciando download do arquivo: ${tempFile.path}`);
-      
+
       const writer = fs.createWriteStream(localInputPath);
       const response = await axios({ url: tempFile.path, method: 'GET', responseType: 'stream' });
       response.data.pipe(writer);
-      
+
       await new Promise((resolve, reject) => {
         writer.on('finish', resolve);
         writer.on('error', reject);
@@ -45,36 +45,50 @@ const videoWorker = async () => {
 
       let orientation: any;
 
-      if(!tempFile?.orientation) {
+      if (!tempFile?.orientation) {
         const o = Number(tempFile?.orientation);
 
-        if(!isNaN(o) && o === 0) {
+        if (!isNaN(o) && o === 0) {
           orientation = o;
         }
+      }// Mapeia os graus para o filtro transpose do FFmpeg
+      let transposeFilter = null;
+
+      const orientationNum = Number(orientation);
+
+      if (orientationNum === 90) {
+        transposeFilter = 'transpose=1';
+      } else if (orientationNum === 180) {
+        // Para 180°, o FFmpeg usa "hflip,vflip" (inverter horizontal e vertical)
+        transposeFilter = 'hflip,vflip';
+      } else if (orientationNum === 270 || orientationNum === -90) {
+        transposeFilter = 'transpose=2';
       }
 
-      const rotateFilter = orientation && orientation !== 0
-        ? `rotate=${orientation}*PI/180`
-        : null;
-
-      console.log(`Download concluído: ${localInputPath}. Iniciando conversão FFmpeg...`);
+      console.log(`Iniciando conversão FFmpeg...`);
 
       await new Promise((resolve, reject) => {
-        let initialRequest = ffmpeg(localInputPath)
-          .outputOptions(['-c:v libx264', '-movflags +faststart', '-pix_fmt yuv420p'])
-          
-          if(rotateFilter) {
-            initialRequest = initialRequest.videoFilters(rotateFilter);
-          }
+        let command = ffmpeg(localInputPath)
+          .outputOptions([
+            '-c:v libx264',
+            '-movflags +faststart',
+            '-pix_fmt yuv420p',
+            '-metadata:s:v:0 rotate=0' // Importante: zera o metadado para não girar em dobro
+          ]);
 
-          initialRequest
-            .save(localOutputPath)
+        if (transposeFilter) {
+          console.log('Aplicando filtro:', transposeFilter);
+          command = command.videoFilters(transposeFilter);
+        }
+
+        command
+          .save(localOutputPath)
           .on('end', () => {
-            console.log("Conversão FFmpeg finalizada com sucesso.");
+            console.log("Conversão finalizada com sucesso.");
             resolve(null);
           })
           .on('error', (err) => {
-            console.error("Erro durante o processamento FFmpeg:", err);
+            console.error("Erro no processamento:", err);
             reject(err);
           });
       });
@@ -86,28 +100,28 @@ const videoWorker = async () => {
 
       await axios.put(uploadUrl, fileStream, {
         headers: {
-          'Content-Type': 'video/mp4', 
-          'Content-Length': stats.size 
+          'Content-Type': 'video/mp4',
+          'Content-Length': stats.size
         },
         maxBodyLength: Infinity,
         maxContentLength: Infinity
       });
 
       console.log(`Upload finalizado para o arquivo: ${tempFile.id}`);
-      
+
       console.log('Migrando post temporario para fixo');
 
       await axios.post(`${process.env.APP_URL!}/api/story/migrate/temp/${storyId}`, {}, {
         headers: {
-                  accessToken: process.env.ACCESS_TOKEN
-                }
+          accessToken: process.env.ACCESS_TOKEN
+        }
       });
 
       console.log('Migrado com sucesso')
 
       await redisPubSub.publish({
         type: 'upload-finish',
-        data: {session, tempFile}
+        data: { session, tempFile }
       })
     } catch (err) {
       console.error("Erro fatal no processamento do vídeo:", err);

@@ -54,18 +54,18 @@ const videoWorker = async () => {
       }// Mapeia os graus para o filtro transpose do FFmpeg
       let transposeFilter = null;
 
-      const orientationNum = Number(orientation);
+      console.log('Adicionar orientation ')
 
-      if (orientationNum === 90) {
+      if (orientation === 90) {
         transposeFilter = 'transpose=1';
-      } else if (orientationNum === 180) {
+      } else if (orientation === 180) {
         // Para 180°, o FFmpeg usa "hflip,vflip" (inverter horizontal e vertical)
         transposeFilter = 'hflip,vflip';
-      } else if (orientationNum === 270 || orientationNum === -90) {
+      } else if (orientation === 270 || orientation === -90) {
         transposeFilter = 'transpose=2';
       }
 
-      console.log(`Iniciando conversão FFmpeg...`);
+      console.log(`Iniciando conversão FFmpeg..., com transposeFilter=${transposeFilter}`);
 
       await new Promise((resolve, reject) => {
         let command = ffmpeg(localInputPath)

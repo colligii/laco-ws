@@ -34,6 +34,7 @@ const start = async () => {
     const clients = new Set<any>();
 
     await redisPubSub.init((data: any, channel) => {
+      console.log('Pub sub received', data.type, data.data)
       if (data.type === 'created-message') {
         for(const connection of clients) {
           if (connection.readyState === 1) {
@@ -48,8 +49,11 @@ const start = async () => {
       } else if (data.type === 'upload-finish') {
         for(const connection of clients) {
           if (connection.readyState === 1) {
+            console.log('Conexão aberta', data.type, data.data)
+            
             const conn = connection as any;
             if(conn.session === data.data.session) {
+              console.log('Conexão encontrada', data.type, data.data)
               connection.send(Message.getMessage('upload-finish', data.data));
             }
           } else {

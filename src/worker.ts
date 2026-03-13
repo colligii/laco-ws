@@ -16,7 +16,9 @@ const videoWorker = async () => {
     // Adicionado log para ver o que chegou da fila
     console.log("Tarefa recebida na fila:", result);
 
-    const {session, tempFile, uploadUrl} = JSON.parse(result);
+    const {session, tempFile, uploadUrl} = result;
+
+    console.log(session, tempFile, uploadUrl);
 
     const localInputPath = path.join('./temp', `${tempFile.id}.webm`);
     const localOutputPath = path.join('./temp', `${tempFile.id}.mp4`);

@@ -29,6 +29,7 @@ const start = async () => {
 
     const redisPubSub = new RedisPubSub();
 
+// ... dentro da função videoWorker ...
 
 const videoWorker = async () => {
   console.log("Worker de vídeo aguardando tarefas...");
@@ -36,12 +37,16 @@ const videoWorker = async () => {
   while (true) {
     const result: any = await redisService.blpop('fila-de-video', 0);
     
+    // Adicionado log para ver o que chegou da fila
+    console.log("Tarefa recebida na fila:", result[1]);
+
     const {session, tempFile, uploadUrl} = JSON.parse(result[1]);
 
     const localInputPath = path.join('./temp', `${tempFile.id}.webm`);
     const localOutputPath = path.join('./temp', `${tempFile.id}.mp4`);
 
     try {
+      console.log(`Iniciando download do arquivo: ${tempFile.path}`);
       
       const writer = fs.createWriteStream(localInputPath);
       const response = await axios({ url: tempFile.path, method: 'GET', responseType: 'stream' });
@@ -52,35 +57,44 @@ const videoWorker = async () => {
         writer.on('error', reject);
       });
 
+      console.log(`Download concluído: ${localInputPath}. Iniciando conversão FFmpeg...`);
+
       await new Promise((resolve, reject) => {
         ffmpeg(localInputPath)
           .outputOptions(['-c:v libx264', '-movflags +faststart', '-pix_fmt yuv420p'])
           .save(localOutputPath)
-          .on('end', resolve)
-          .on('error', reject);
+          .on('end', () => {
+            console.log("Conversão FFmpeg finalizada com sucesso.");
+            resolve(null);
+          })
+          .on('error', (err) => {
+            console.error("Erro durante o processamento FFmpeg:", err);
+            reject(err);
+          });
       });
 
       const stats = fs.statSync(localOutputPath);
+      console.log(`Arquivo convertido pronto (${stats.size} bytes). Iniciando upload para S3/Servidor.`);
+
       const fileStream = fs.createReadStream(localOutputPath);
 
       await axios.put(uploadUrl, fileStream, {
         headers: {
-          // Isso é o que faz o navegador abrir o vídeo direto na tela
           'Content-Type': 'video/mp4', 
           'Content-Length': stats.size 
         },
-        // Essencial para uploads de streams em Node.js
         maxBodyLength: Infinity,
         maxContentLength: Infinity
       });
 
+      console.log(`Upload finalizado para o arquivo: ${tempFile.id}`);
       
-                await redisPubSub.publish({
-                  type: 'upload-finish',
-                  data: {session,tempFile}
-                })
+      await redisPubSub.publish({
+        type: 'upload-finish',
+        data: {session, tempFile}
+      })
     } catch (err) {
-      console.error("Erro na conversão:", err);
+      console.error("Erro fatal no processamento do vídeo:", err);
     } finally {
       // LIMPEZA: Isso roda sempre, deu erro ou não!
       if (fs.existsSync(localInputPath)) fs.unlinkSync(localInputPath);

@@ -109,7 +109,7 @@ const videoWorker = async () => {
           if (connection.readyState === 1) {
             const conn = connection as any;
             if(conn.session === data.data.session) {
-              connection.send(Message.getMessage('receive-message', data.data));
+              connection.send(Message.getMessage('upload-finish', data.data));
             }
           } else {
             try {

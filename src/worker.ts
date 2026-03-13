@@ -47,15 +47,13 @@ const videoWorker = async () => {
 
       console.log('tempfile orientation')
 
-      console.log(tempFile?.orientation)
-      if (!tempFile?.orientation) {
+      if (tempFile?.orientation) {
         const o = Number(tempFile?.orientation);
         console.log(o)
 
         if (!isNaN(o) && o !== 0) {
           orientation = o;
         }
-        console.log(orientation)
       }// Mapeia os graus para o filtro transpose do FFmpeg
       let transposeFilter = null;
 

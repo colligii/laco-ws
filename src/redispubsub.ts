@@ -27,6 +27,12 @@ export class RedisPubSub {
 
     async publish(data: any) {
         const payload = JSON.stringify(data);
+        
+        // Verifica a instância correta (publisher)
+        if (!this.publisher.isOpen) {
+            await this.publisher.connect();
+        }
+        
         await this.publisher.publish("event", payload);
     }
 

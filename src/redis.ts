@@ -1,26 +1,22 @@
 import * as redis from 'redis';
 import 'dotenv/config';
-import { RedisClientType } from '@redis/client';
 
 class RedisService {
-    private redis: RedisClientType;
-
+    private client: redis.RedisClientType;
+    
     constructor() {
-        this.redis = redis.createClient({
-            url: process.env.REDIS_URL
-        });
+        this.client = redis.createClient({ url: process.env.REDIS_URL });
+        
+        this.client.connect().catch(console.error);
     }
 
-    async get(key: string) {
-        if (!this.redis.isOpen) {
-            await this.redis.connect();
-        }
-    
-        const data = await this.redis.get(key);
-    
-        return data;
-    }
+    async get(key: string) { return await this.client.get(key); }
 
+    async rpush(key: string, value: string) { return await this.client.rPush(key, value); }
+    
+    async blpop(key: string, timeout: number = 0) { 
+        return await this.client.blPop(key, timeout); 
+    }
 }
 
 export const redisService = new RedisService();

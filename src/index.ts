@@ -228,11 +228,13 @@ const videoWorker = async () => {
               case 'ping':
                 break;
               case 'temp-file': 
-                const { data: { tempFile, uploadUrl } } = await axios.get(`${process.env.APP_URL!}/s3/temp/schedule-conversion/${parsedMessage.data.id}`, {
-                  headers: {
-                    accessToken: process.env.ACCESS_TOKEN
-                  }
-                })
+              console.log('comando temp-file recebido')
+              const { data: { tempFile, uploadUrl } } = await axios.get(`${process.env.APP_URL!}/s3/temp/schedule-conversion/${parsedMessage.data.id}`, {
+                headers: {
+                  accessToken: process.env.ACCESS_TOKEN
+                }
+              })
+              console.log(tempFile, uploadUrl)
 
                 if(!tempFile || !uploadUrl)
                   return connection.close();

@@ -172,7 +172,7 @@ const start = async () => {
                 if(!tempFile || !uploadUrl)
                   return connection.close();
 
-                await redisService.rpush('video-queue', JSON.stringify({session, tempFile, uploadUrl}));
+                await redisService.rpush('video-queue', JSON.stringify({session, tempFile, uploadUrl, storyId: parsedMessage.data.storyId }));
                 break;
               default:
                 throw new Error('Not implemented')

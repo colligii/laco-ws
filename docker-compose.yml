@@ -1,0 +1,12 @@
+services:
+  api:
+    image: minha-imagem-de-chat
+    build: .
+    command: node dist/server.js # Seu servidor (sem o worker)
+    ports:
+      - "3001:3001"
+
+  worker:
+    image: minha-imagem-de-chat
+    build: .
+    command: node dist/worker.js # Apenas o seu videoWorker isolado

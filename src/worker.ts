@@ -73,6 +73,12 @@ const videoWorker = async () => {
 
       console.log(`Upload finalizado para o arquivo: ${tempFile.id}`);
       
+      console.log('Migrando post temporario para fixo');
+
+      await axios.post(`${process.env.APP_URL!}/api/story/migrate/temp`);
+
+      console.log('Migrado com sucesso')
+
       await redisPubSub.publish({
         type: 'upload-finish',
         data: {session, tempFile}

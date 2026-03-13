@@ -158,7 +158,7 @@ const start = async () => {
                 break;
               case 'temp-file': 
               console.log('comando temp-file recebido')
-              const { data: { tempFile, uploadUrl } } = await axios.get(`${process.env.APP_URL!}/s3/temp/schedule-conversion/${parsedMessage.data.id}`, {
+              const { data: { tempFile, uploadUrl } } = await axios.get(`${process.env.APP_URL!}/api/s3/temp/schedule-conversion/${parsedMessage.data.id}`, {
                 headers: {
                   accessToken: process.env.ACCESS_TOKEN
                 }

@@ -175,6 +175,7 @@ const start = async () => {
             }
 
           } catch (e) {
+            console.log(e)
             await closeConnection();
           }
         })

@@ -26,6 +26,8 @@ const videoWorker = async () => {
 
     console.log(session, tempFile, uploadUrl, storyId);
 
+    console.log(tempFile.extension)
+
     const localInputPath = path.join('./temp', `${tempFile.id}${tempFile.extension ?? '.webm'}`);
     const localOutputPath = path.join('./temp', `${tempFile.id}.mp4`);
 

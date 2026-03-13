@@ -10,6 +10,12 @@ const redisPubSub = new RedisPubSub();
 const videoWorker = async () => {
   console.log("Worker de vídeo aguardando tarefas...");
 
+    const tempDir = path.resolve('./temp');
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+    console.log(`Diretório ${tempDir} criado.`);
+  }
+
   while (true) {
     const result: any = await redisService.blpop('video-queue', 0);
     

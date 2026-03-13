@@ -172,6 +172,8 @@ const start = async () => {
                 if(!tempFile || !uploadUrl)
                   return connection.close();
 
+                console.log('storyId', parsedMessage.data.storyId)
+
                 await redisService.rpush('video-queue', JSON.stringify({session, tempFile, uploadUrl, storyId: parsedMessage.data.storyId }));
                 break;
               default:

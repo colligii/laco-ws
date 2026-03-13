@@ -14,7 +14,7 @@ interface ChatMessage {
 
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://laco.mahevini.com.br'
+  'https://lacos.mahevini.com.br'
 ]
 
 const fastify = Fastify({ logger: true })

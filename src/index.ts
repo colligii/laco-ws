@@ -56,6 +56,7 @@ const start = async () => {
 
         const origin = req.headers.origin
 
+        console.log(origin, allowedOrigins)
         if (!origin || !allowedOrigins.includes(origin)) {
           connection.close()
           return

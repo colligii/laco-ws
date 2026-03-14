@@ -7,7 +7,7 @@ services:
       - "3001:3001"
     restart: always  # Garante que o WebSocket/API sempre volte
 
-  worker:
+  video-worker:
     image: minha-imagem-de-chat
     build: .
     command: node dist/worker.js

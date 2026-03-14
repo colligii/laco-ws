@@ -10,3 +10,19 @@ services:
     image: minha-imagem-de-chat
     build: .
     command: node dist/worker.js # Apenas o seu videoWorker isolado
+
+  worker1:
+    image: minha-imagem-de-chat
+    build: .
+    command: node dist/worker.js # Apenas o seu videoWorker isolado
+
+  worker2:
+    image: minha-imagem-de-chat
+    build: .
+    command: node dist/worker.js # Apenas o seu videoWorker isolado
+
+  worker3:
+    image: minha-imagem-de-chat
+    build: .
+    command: node dist/worker.js # Apenas o seu videoWorker isolado
+

@@ -5,13 +5,14 @@ services:
     command: node dist/index.js
     ports:
       - "3001:3001"
-    restart: always  # Garante que o WebSocket/API sempre volte
+    restart: always
 
-  worker1:
+  # Workers de 1 a 30
+  worker1: &worker-base
     image: minha-imagem-de-chat
     build: .
     command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
+    restart: always
     deploy:
       restart_policy:
         condition: on-failure
@@ -20,409 +21,32 @@ services:
           cpus: '0.8'
           memory: 1G
 
-
-  worker2:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker3:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker4:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker5:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker6:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker7:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker8:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker9:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker10:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker11:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker12:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker13:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker14:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker15:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker16:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker17:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker18:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker19:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker29:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker21:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker22:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker23:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker24:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker25:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker26:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker27:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker28:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker29:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
-
-  worker30:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js
-    restart: always  # Essencial para garantir processamento contínuo
-    deploy:
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: '0.8'
-          memory: 1G
-
+  worker2: *worker-base
+  worker3: *worker-base
+  worker4: *worker-base
+  worker5: *worker-base
+  worker6: *worker-base
+  worker7: *worker-base
+  worker8: *worker-base
+  worker9: *worker-base
+  worker10: *worker-base
+  worker11: *worker-base
+  worker12: *worker-base
+  worker13: *worker-base
+  worker14: *worker-base
+  worker15: *worker-base
+  worker16: *worker-base
+  worker17: *worker-base
+  worker18: *worker-base
+  worker19: *worker-base
+  worker20: *worker-base
+  worker21: *worker-base
+  worker22: *worker-base
+  worker23: *worker-base
+  worker24: *worker-base
+  worker25: *worker-base
+  worker26: *worker-base
+  worker27: *worker-base
+  worker28: *worker-base
+  worker29: *worker-base
+  worker30: *worker-base

@@ -6,7 +6,6 @@ services:
     ports:
       - "3001:3001"
     restart: always  # Garante que o WebSocket/API sempre volte
-    depends_on:
 
   worker:
     image: minha-imagem-de-chat

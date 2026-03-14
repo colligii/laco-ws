@@ -35,18 +35,3 @@ services:
   worker13: *worker-base
   worker14: *worker-base
   worker15: *worker-base
-  worker16: *worker-base
-  worker17: *worker-base
-  worker18: *worker-base
-  worker19: *worker-base
-  worker20: *worker-base
-  worker21: *worker-base
-  worker22: *worker-base
-  worker23: *worker-base
-  worker24: *worker-base
-  worker25: *worker-base
-  worker26: *worker-base
-  worker27: *worker-base
-  worker28: *worker-base
-  worker29: *worker-base
-  worker30: *worker-base

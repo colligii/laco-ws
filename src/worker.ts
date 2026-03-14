@@ -74,12 +74,16 @@ const videoWorker = async () => {
 
       await new Promise((resolve, reject) => {
         let command = ffmpeg(localInputPath)
-          .outputOptions([
-            '-c:v libx264',
-            '-movflags +faststart',
-            '-pix_fmt yuv420p',
-            '-metadata:s:v:0 rotate=0' // Importante: zera o metadado para não girar em dobro
-          ]);
+        .outputOptions([
+          '-c:v libx264',             // Codec padrão iOS
+          '-profile:v high',          // Garante perfil High para hardware acceleration
+          '-level 4.1',               // Nível de compatibilidade ideal
+          '-pix_fmt yuv420p',         // Crucial para navegadores
+          '-c:a aac',                 // Força áudio para AAC (obrigatório para iOS)
+          '-b:a 128k',                // Bitrate de áudio estável
+          '-movflags +faststart',     // Move o moov atom para o início
+          '-metadata:s:v:0 rotate=0'  // Limpa rotação original
+        ]);
 
         if (transposeFilter) {
           console.log('Aplicando filtro:', transposeFilter);

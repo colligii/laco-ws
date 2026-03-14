@@ -22,9 +22,11 @@ const videoWorker = async () => {
     // Adicionado log para ver o que chegou da fila
     console.log("Tarefa recebida na fila:", result.element);
 
-    const { session, tempFile, uploadUrl, storyId } = JSON.parse(result.element);
+    const { session, tempFile, uploadUrl, storyId, postId, type } = JSON.parse(result.element);
 
-    console.log(session, tempFile, uploadUrl, storyId);
+    console.log(session, tempFile, uploadUrl, storyId, postId, type);
+
+    const migrateId = type === 'post' ? postId : storyId;
 
     console.log(tempFile.extension)
 
@@ -114,7 +116,7 @@ const videoWorker = async () => {
 
       console.log('Migrando post temporario para fixo');
 
-      await axios.post(`${process.env.APP_URL!}/api/story/migrate/temp/${storyId}`, {}, {
+      await axios.post(`${process.env.APP_URL!}/api/${type}/migrate/temp/${migrateId}`, {}, {
         headers: {
           accessToken: process.env.ACCESS_TOKEN
         }

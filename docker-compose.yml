@@ -2,27 +2,22 @@ services:
   api:
     image: minha-imagem-de-chat
     build: .
-    command: node dist/index.js # Seu servidor (sem o worker)
+    command: node dist/index.js
     ports:
       - "3001:3001"
+    restart: always  # Garante que o WebSocket/API sempre volte
+    depends_on:
 
   worker:
     image: minha-imagem-de-chat
     build: .
-    command: node dist/worker.js # Apenas o seu videoWorker isolado
-
-  worker1:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js # Apenas o seu videoWorker isolado
-
-  worker2:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js # Apenas o seu videoWorker isolado
-
-  worker3:
-    image: minha-imagem-de-chat
-    build: .
-    command: node dist/worker.js # Apenas o seu videoWorker isolado
-
+    command: node dist/worker.js
+    restart: always  # Essencial para garantir processamento contínuo
+    deploy:
+      replicas: 30  # Escala para 50 workers
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.8'
+          memory: 1G

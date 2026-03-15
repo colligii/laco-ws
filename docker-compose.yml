@@ -7,8 +7,7 @@ services:
       - "3001:3001"
     restart: always
 
-  # Workers de 1 a 30
-  worker1: &worker-base
+  worker:
     image: minha-imagem-de-chat
     build: .
     command: node dist/worker.js
@@ -20,18 +19,3 @@ services:
         limits:
           cpus: '2'
           memory: 1G
-
-  worker2: *worker-base
-  worker3: *worker-base
-  worker4: *worker-base
-  worker5: *worker-base
-  worker6: *worker-base
-  worker7: *worker-base
-  worker8: *worker-base
-  worker9: *worker-base
-  worker10: *worker-base
-  worker11: *worker-base
-  worker12: *worker-base
-  worker13: *worker-base
-  worker14: *worker-base
-  worker15: *worker-base
